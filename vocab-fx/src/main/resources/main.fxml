@@ -7,9 +7,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.control.cell.*?> 
-<?import javafx.collections.*?> 
-<?import fxmltableview.*?> 
 
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
@@ -58,23 +55,15 @@
                <children>
                   <TableView fx:id="wordTable" editable="true" prefHeight="200.0" prefWidth="200.0">
                     <columns>
-                      <TableColumn fx:id="wordColumn" prefWidth="195.0" text="Wort">
-                      	<cellValueFactory>
-                      		<PropertyValueFactory property="word" />
-        				</cellValueFactory>
-       				  </TableColumn>
-                      <TableColumn fx:id="translationColumn" prefWidth="238.0" text="Übersetzung">
-                       <cellValueFactory>
-                      		<PropertyValueFactory property="translation" />
-        				</cellValueFactory>
-       				  </TableColumn>
+                      <TableColumn fx:id="wordColumn" onEditCommit="#onWordChanged" prefWidth="195.0" text="Wort" />
+                      <TableColumn fx:id="translationColumn" onEditCommit="#onTranslationChanged" prefWidth="238.0" text="Übersetzung" />
                     </columns>
                   </TableView>
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
                         <TextField fx:id="wordField" prefHeight="25.0" prefWidth="193.0" promptText="Wort" />
                         <TextField fx:id="translationField" prefHeight="25.0" prefWidth="243.0" promptText="Übersetzung" />
-                        <Button mnemonicParsing="false" onAction="#addWord" text="+" />
+                        <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" text="+" />
                      </children>
                   </HBox>
                </children>

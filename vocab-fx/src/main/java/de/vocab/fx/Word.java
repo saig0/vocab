@@ -28,4 +28,12 @@ public class Word {
 	public void setTranslation(String translation){
 		this.translation.setValue(translation);
 	}
+	
+	public StringProperty getWordProperty(){
+		return word;
+	}
+	
+	public StringProperty getTranslationProperty(){
+		return translation;
+	}
 }
