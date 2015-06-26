@@ -55,7 +55,7 @@
                <children>
                   <HBox prefHeight="47.0" prefWidth="503.0" spacing="5.0">
                      <children>
-                        <TextField fx:id="filter" prefHeight="25.0" prefWidth="196.0" promptText="Filter nach Wort / Übersetzung" />
+                        <TextField fx:id="filterField" prefHeight="25.0" prefWidth="196.0" promptText="Filter nach Wort / Übersetzung" />
                      </children>
                   </HBox>
                   <TableView fx:id="wordTable" editable="true" prefHeight="200.0" prefWidth="200.0">

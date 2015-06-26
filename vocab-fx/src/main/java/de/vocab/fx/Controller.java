@@ -1,5 +1,7 @@
 package de.vocab.fx;
 
+import java.util.function.Predicate;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,6 +14,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 
 public class Controller {
 
@@ -37,7 +41,7 @@ public class Controller {
 	private Button removeWordButton;
 
 	@FXML
-	private TextField filter;
+	private TextField filterField;
 
 	private final ObservableList<Word> words;
 
@@ -74,26 +78,10 @@ public class Controller {
 		// data).
 		FilteredList<Word> filteredData = new FilteredList<>(words, p -> true);
 		// 2. Set the filter Predicate whenever the filter changes.
-		filter.textProperty().addListener(
-				(observable, oldValue, newValue) -> {
-					filteredData.setPredicate(word -> {
-						// If filter text is empty, display all persons.
-							if (newValue == null || newValue.isEmpty()) {
-								return true;
-							}
-
-							String lowerCaseFilter = newValue.toLowerCase();
-
-							if (word.getWord().toLowerCase()
-									.contains(lowerCaseFilter)) {
-								return true; // Filter matches first name.
-							} else if (word.getTranslation().toLowerCase()
-									.contains(lowerCaseFilter)) {
-								return true; // Filter matches last name.
-							}
-							return false; // Does not match.
-						});
-				});
+		ObjectBinding<Predicate<Word>> filterBinding = Bindings
+				.createObjectBinding(() -> containsWord(filterField
+						.textProperty().getValue()), filterField.textProperty());
+		filteredData.predicateProperty().bind(filterBinding);
 
 		// 3. Wrap the FilteredList in a SortedList.
 		SortedList<Word> sortedData = new SortedList<>(filteredData);
@@ -101,6 +89,25 @@ public class Controller {
 		sortedData.comparatorProperty().bind(wordTable.comparatorProperty());
 		// 5. Add sorted (and filtered) data to the table.
 		wordTable.setItems(sortedData);
+	}
+
+	private Predicate<Word> containsWord(String containingWord) {
+		return word -> {
+			// If filter text is empty, display all persons.
+			if (containingWord == null || containingWord.isEmpty()) {
+				return true;
+			}
+
+			String lowerCaseFilter = containingWord.toLowerCase();
+
+			if (word.getWord().toLowerCase().contains(lowerCaseFilter)) {
+				return true; // Filter matches first name.
+			} else if (word.getTranslation().toLowerCase()
+					.contains(lowerCaseFilter)) {
+				return true; // Filter matches last name.
+			}
+			return false; // Does not match.
+		};
 	}
 
 	@FXML
