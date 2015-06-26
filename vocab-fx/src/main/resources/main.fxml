@@ -51,24 +51,29 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <VBox layoutX="28.0" layoutY="14.0" prefHeight="264.0" prefWidth="503.0" spacing="5.0">
+            <VBox layoutX="28.0" layoutY="14.0" prefHeight="296.0" prefWidth="503.0" spacing="5.0">
                <children>
+                  <HBox prefHeight="47.0" prefWidth="503.0" spacing="5.0">
+                     <children>
+                        <TextField fx:id="filter" prefHeight="25.0" prefWidth="196.0" promptText="Filter nach Wort / Übersetzung" />
+                     </children>
+                  </HBox>
                   <TableView fx:id="wordTable" editable="true" prefHeight="200.0" prefWidth="200.0">
                     <columns>
                       <TableColumn fx:id="wordColumn" onEditCommit="#onWordChanged" prefWidth="195.0" text="Wort" />
                       <TableColumn fx:id="translationColumn" onEditCommit="#onTranslationChanged" prefWidth="238.0" text="Übersetzung" />
                     </columns>
                   </TableView>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                  <HBox prefHeight="39.0" prefWidth="503.0" spacing="5.0">
                      <children>
                         <TextField fx:id="wordField" prefHeight="25.0" prefWidth="193.0" promptText="Wort" />
                         <TextField fx:id="translationField" prefHeight="25.0" prefWidth="243.0" promptText="Übersetzung" />
                         <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" text="+" />
                      </children>
                   </HBox>
+                  <Button fx:id="removeWordButton" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
                </children>
             </VBox>
-            <Button fx:id="removeWordButton" layoutX="28.0" layoutY="266.0" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
       </children>
     </AnchorPane>
   </children>

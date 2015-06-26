@@ -8,6 +8,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
 public class Controller {
 
@@ -33,6 +37,17 @@ public class Controller {
 	private Button removeWordButton;
 
 	@FXML
+	private TextField filter;
+
+	private final ObservableList<Word> words;
+
+	public Controller() {
+		words = FXCollections.observableArrayList(new Word("Drachenfrucht",
+				"thanh long"));
+	}
+
+	@SuppressWarnings("restriction")
+	@FXML
 	private void initialize() {
 		wordColumn.setCellValueFactory(cellData -> cellData.getValue()
 				.getWordProperty());
@@ -54,12 +69,44 @@ public class Controller {
 
 		removeWordButton.disableProperty().bind(
 				wordTable.getSelectionModel().selectedItemProperty().isNull());
+
+		// 1. Wrap the ObservableList in a FilteredList (initially display all
+		// data).
+		FilteredList<Word> filteredData = new FilteredList<>(words, p -> true);
+		// 2. Set the filter Predicate whenever the filter changes.
+		filter.textProperty().addListener(
+				(observable, oldValue, newValue) -> {
+					filteredData.setPredicate(word -> {
+						// If filter text is empty, display all persons.
+							if (newValue == null || newValue.isEmpty()) {
+								return true;
+							}
+
+							String lowerCaseFilter = newValue.toLowerCase();
+
+							if (word.getWord().toLowerCase()
+									.contains(lowerCaseFilter)) {
+								return true; // Filter matches first name.
+							} else if (word.getTranslation().toLowerCase()
+									.contains(lowerCaseFilter)) {
+								return true; // Filter matches last name.
+							}
+							return false; // Does not match.
+						});
+				});
+
+		// 3. Wrap the FilteredList in a SortedList.
+		SortedList<Word> sortedData = new SortedList<>(filteredData);
+		// 4. Bind the SortedList comparator to the TableView comparator.
+		sortedData.comparatorProperty().bind(wordTable.comparatorProperty());
+		// 5. Add sorted (and filtered) data to the table.
+		wordTable.setItems(sortedData);
 	}
 
 	@FXML
 	public void deleteWord(ActionEvent event) {
 		Word selectedWord = wordTable.getSelectionModel().getSelectedItem();
-		wordTable.getItems().remove(selectedWord);
+		words.remove(selectedWord);
 	}
 
 	@FXML
@@ -83,7 +130,7 @@ public class Controller {
 	@FXML
 	public void addWord(ActionEvent event) {
 		Word newWord = new Word(wordField.getText(), translationField.getText());
-		wordTable.getItems().add(newWord);
+		words.add(newWord);
 
 		wordField.clear();
 		translationField.clear();
