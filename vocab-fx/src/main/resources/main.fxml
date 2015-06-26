@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.control.cell.*?> 
+<?import javafx.collections.*?> 
+<?import fxmltableview.*?> 
 
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
@@ -50,15 +54,23 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <VBox layoutX="28.0" layoutY="14.0" prefHeight="264.0" prefWidth="503.0">
+            <VBox layoutX="28.0" layoutY="14.0" prefHeight="264.0" prefWidth="503.0" spacing="5.0">
                <children>
                   <TableView fx:id="wordTable" editable="true" prefHeight="200.0" prefWidth="200.0">
                     <columns>
-                      <TableColumn prefWidth="195.0" text="Wort" />
-                      <TableColumn prefWidth="238.0" text="Übersetzung" />
+                      <TableColumn fx:id="wordColumn" prefWidth="195.0" text="Wort">
+                      	<cellValueFactory>
+                      		<PropertyValueFactory property="word" />
+        				</cellValueFactory>
+       				  </TableColumn>
+                      <TableColumn fx:id="translationColumn" prefWidth="238.0" text="Übersetzung">
+                       <cellValueFactory>
+                      		<PropertyValueFactory property="translation" />
+        				</cellValueFactory>
+       				  </TableColumn>
                     </columns>
                   </TableView>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
                         <TextField fx:id="wordField" prefHeight="25.0" prefWidth="193.0" promptText="Wort" />
                         <TextField fx:id="translationField" prefHeight="25.0" prefWidth="243.0" promptText="Übersetzung" />
