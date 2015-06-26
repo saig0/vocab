@@ -49,6 +49,12 @@ public class Controller {
 				wordField.textProperty().isEmpty()
 						.or(translationField.textProperty().isEmpty()));
 	}
+	
+	@FXML
+	public void deleteWord(ActionEvent event){
+		Word selectedWord = wordTable.getSelectionModel().getSelectedItem();
+		wordTable.getItems().remove(selectedWord);
+	}
 
 	@FXML
 	public void onWordChanged(TableColumn.CellEditEvent<Word, String> event) {

@@ -68,6 +68,7 @@
                   </HBox>
                </children>
             </VBox>
+            <Button layoutX="28.0" layoutY="266.0" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
       </children>
     </AnchorPane>
   </children>
