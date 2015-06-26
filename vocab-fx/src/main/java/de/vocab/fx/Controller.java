@@ -30,6 +30,9 @@ public class Controller {
 	private Button addWordButton;
 
 	@FXML
+	private Button removeWordButton;
+
+	@FXML
 	private void initialize() {
 		wordColumn.setCellValueFactory(cellData -> cellData.getValue()
 				.getWordProperty());
@@ -48,10 +51,13 @@ public class Controller {
 		addWordButton.disableProperty().bind(
 				wordField.textProperty().isEmpty()
 						.or(translationField.textProperty().isEmpty()));
+
+		removeWordButton.disableProperty().bind(
+				wordTable.getSelectionModel().selectedItemProperty().isNull());
 	}
-	
+
 	@FXML
-	public void deleteWord(ActionEvent event){
+	public void deleteWord(ActionEvent event) {
 		Word selectedWord = wordTable.getSelectionModel().getSelectedItem();
 		wordTable.getItems().remove(selectedWord);
 	}
