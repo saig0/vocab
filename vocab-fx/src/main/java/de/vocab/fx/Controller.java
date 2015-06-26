@@ -44,12 +44,14 @@ public class Controller {
 		// translationColumn.setOnEditCommit(event -> event.getTableView()
 		// .getItems().get(event.getTablePosition().getRow())
 		// .setTranslation(event.getNewValue()));
-		
+
+		addWordButton.disableProperty().bind(
+				wordField.textProperty().isEmpty()
+						.or(translationField.textProperty().isEmpty()));
 	}
 
 	@FXML
 	public void onWordChanged(TableColumn.CellEditEvent<Word, String> event) {
-		System.out.println("change word");
 		Word editedWord = getChangedWord(event);
 		editedWord.setWord(event.getNewValue());
 	}
@@ -62,22 +64,16 @@ public class Controller {
 	@FXML
 	public void onTranslationChanged(
 			TableColumn.CellEditEvent<Word, String> event) {
-		System.out.println("translation changed");
 		Word editedWord = getChangedWord(event);
 		editedWord.setTranslation(event.getNewValue());
 	}
 
 	@FXML
 	public void addWord(ActionEvent event) {
-		if (!wordField.getText().isEmpty()
-				|| !translationField.getText().isEmpty()) {
-			System.out.println("add word");
-			Word newWord = new Word(wordField.getText(),
-					translationField.getText());
-			wordTable.getItems().add(newWord);
+		Word newWord = new Word(wordField.getText(), translationField.getText());
+		wordTable.getItems().add(newWord);
 
-			wordField.clear();
-			translationField.clear();
-		}
+		wordField.clear();
+		translationField.clear();
 	}
 }
