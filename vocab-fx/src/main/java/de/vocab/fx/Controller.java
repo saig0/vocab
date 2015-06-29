@@ -111,12 +111,12 @@ public class Controller {
 						.collect(Collectors.joining(","))));
 		tagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
-		// addWordButton.disableProperty().bind(
-		// wordField.textProperty().isEmpty()
-		// .or(translationField.textProperty().isEmpty()));
-		//
-		// removeWordButton.disableProperty().bind(
-		// wordTable.getSelectionModel().selectedItemProperty().isNull());
+		addWordButton.disableProperty().bind(
+				wordField.textProperty().isEmpty()
+						.or(translationField.textProperty().isEmpty()));
+
+		removeWordButton.disableProperty().bind(
+				wordTable.getSelectionModel().selectedItemProperty().isNull());
 
 		// 1. Wrap the ObservableList in a FilteredList (initially display all
 		// data).
@@ -170,15 +170,15 @@ public class Controller {
 		};
 	}
 
-	private Predicate<Word> containsTag(String tag) {
+	private Predicate<Word> containsTag(String tags) {
 		return word -> {
 			// If filter text is empty, display all persons.
-			if (tag == null || tag.isEmpty()) {
+			if (tags == null || tags.isEmpty()) {
 				return true;
 			}
 
-			return word.getTags().stream().filter(t -> t.equalsIgnoreCase(tag))
-					.findAny().isPresent();
+			return Arrays.stream(tags.split(TAG_SEPARATOR)).allMatch(
+					t -> word.getTags().contains(t));
 		};
 	}
 
@@ -239,6 +239,8 @@ public class Controller {
 		wordField.clear();
 		translationField.clear();
 		tagField.clear();
+
+		wordField.requestFocus();
 
 		updateTags(selectedTags);
 	}
