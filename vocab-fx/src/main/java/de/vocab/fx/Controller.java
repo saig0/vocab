@@ -2,19 +2,25 @@ package de.vocab.fx;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import com.sun.xml.internal.txw2.output.StreamSerializer;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -22,12 +28,14 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -49,7 +57,10 @@ public class Controller {
 
 	@FXML
 	private TableColumn<Word, String> translationColumn;
-	
+
+	@FXML
+	private TableColumn<Word, String> tagColumn;
+
 	@FXML
 	private Button addWordButton;
 
@@ -97,12 +108,50 @@ public class Controller {
 		// .getItems().get(event.getTablePosition().getRow())
 		// .setTranslation(event.getNewValue()));
 
-		addWordButton.disableProperty().bind(
-				wordField.textProperty().isEmpty()
-						.or(translationField.textProperty().isEmpty()));
+		tagColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+				cellData.getValue().getTags().stream()
+						.collect(Collectors.joining(","))));
+		tagColumn
+				.setCellFactory(new Callback<TableColumn<Word, String>, TableCell<Word, String>>() {
 
-		removeWordButton.disableProperty().bind(
-				wordTable.getSelectionModel().selectedItemProperty().isNull());
+					@Override
+					public TableCell<Word, String> call(
+							TableColumn<Word, String> arg0) {
+						return new TableCell<Word, String>() {
+
+							@Override
+							protected void updateItem(String item, boolean empty) {
+								super.updateItem(item, empty);
+
+								if (empty) {
+									setText(null);
+									setGraphic(null);
+								} else {
+									setText(null);
+									Node currentNode = getGraphic();
+
+									TextField textField = TagTextFieldFactory.create(FXCollections
+											.observableSet(tags
+													.toArray(new String[] {})));
+									textField.setText(item);
+									
+									Node newNode = (Node) textField;
+									if (currentNode == null
+											|| !currentNode.equals(newNode)) {
+										setGraphic(newNode);
+									}
+								}
+							}
+						};
+					}
+				});
+
+		// addWordButton.disableProperty().bind(
+		// wordField.textProperty().isEmpty()
+		// .or(translationField.textProperty().isEmpty()));
+		//
+		// removeWordButton.disableProperty().bind(
+		// wordTable.getSelectionModel().selectedItemProperty().isNull());
 
 		// 1. Wrap the ObservableList in a FilteredList (initially display all
 		// data).
@@ -144,7 +193,7 @@ public class Controller {
 
 				List<String> previosTags = Arrays.asList(text
 						.split(TAG_SEPARATOR));
-				
+
 				filteredTags.setPredicate(tag -> !previosTags.contains(tag));
 
 				List<MenuItem> items = filteredTags.stream()
@@ -180,7 +229,8 @@ public class Controller {
 	@FXML
 	public void tagTyped(KeyEvent event) {
 		if (event.getCode().isLetterKey() || event.getCode().isDigitKey()
-				|| event.getCode().equals(KeyCode.BACK_SPACE) || event.getCode().equals(KeyCode.COMMA)) {
+				|| event.getCode().equals(KeyCode.BACK_SPACE)
+				|| event.getCode().equals(KeyCode.COMMA)) {
 			filterTags();
 
 			if (!tagContextMenu.isShowing()) {
@@ -301,11 +351,35 @@ public class Controller {
 	}
 
 	@FXML
+	public void onTagChanged(CellEditEvent<Word, String> event) {
+		Word changedWord = getChangedWord(event);
+		Set<String> changedTags = Arrays.stream(
+				event.getNewValue().split(TAG_SEPARATOR)).collect(
+				Collectors.toSet());
+		changedWord.setTags(changedTags);
+
+		updateTags(changedTags);
+	}
+
+	private void updateTags(Set<String> changedTags) {
+		// tags.addAll(changedTags);
+		changedTags.stream().filter(tag -> !tags.contains(tag))
+				.forEach(tags::add);
+	}
+
+	@FXML
 	public void addWord(ActionEvent event) {
 		Word newWord = new Word(wordField.getText(), translationField.getText());
+		Set<String> selectedTags = Arrays.stream(
+				tagField.getText().split(TAG_SEPARATOR)).collect(
+				Collectors.toSet());
+		newWord.setTags(selectedTags);
 		words.add(newWord);
 
 		wordField.clear();
 		translationField.clear();
+		tagField.clear();
+
+		updateTags(selectedTags);
 	}
 }
