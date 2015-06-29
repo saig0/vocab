@@ -62,7 +62,8 @@
                                     <HBox spacing="5.0">
                                        <children>
                                           <Label prefHeight="25.0" prefWidth="41.0" text="Suche" />
-                                          <TextField fx:id="filterField" prefHeight="25.0" prefWidth="196.0" promptText="nach Wort / Übersetzung..." />
+                                          <TextField fx:id="filterField" prefHeight="25.0" prefWidth="387.0" promptText="nach Wort / Übersetzung" />
+                                          <TextField fx:id="tagFilterField" prefHeight="25.0" prefWidth="169.0" promptText="nach Stichwörtern" />
                                        </children>
                                     </HBox>
                                     <TitledPane text="Neues Wort hinzufügen">
@@ -75,8 +76,8 @@
                                                          <children>
                                                             <TextField fx:id="wordField" prefHeight="25.0" prefWidth="186.0" promptText="Wort" />
                                                             <TextField fx:id="translationField" prefHeight="25.0" prefWidth="231.0" promptText="Übersetzung" />
-                                                            <TextField fx:id="tagField" promptText="Stichwörter" />
-                                                            <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" prefHeight="25.0" prefWidth="106.0" text="hinzufügen" />
+                                                            <TextField fx:id="tagField" prefHeight="25.0" prefWidth="169.0" promptText="Stichwörter" />
+                                                            <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" onKeyReleased="#addWordByKey" prefHeight="25.0" prefWidth="106.0" text="hinzufügen" />
                                                          </children>
                                                       </HBox>
                                                    </children>
@@ -108,5 +109,6 @@
             </TabPane>
       </children>
     </AnchorPane>
+      <TextField />
   </children>
 </VBox>

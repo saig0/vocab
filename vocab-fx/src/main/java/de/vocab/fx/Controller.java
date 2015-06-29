@@ -71,6 +71,9 @@ public class Controller {
 	private TextField filterField;
 
 	@FXML
+	private TextField tagFilterField;
+
+	@FXML
 	private Button specialChar1;
 
 	@FXML
@@ -120,8 +123,10 @@ public class Controller {
 		FilteredList<Word> filteredData = new FilteredList<>(words, p -> true);
 		// 2. Set the filter Predicate whenever the filter changes.
 		ObjectBinding<Predicate<Word>> filterBinding = Bindings
-				.createObjectBinding(() -> containsWord(filterField
-						.textProperty().getValue()), filterField.textProperty());
+				.createObjectBinding(() -> containsWord(filterField.getText())
+						.and(containsTag(tagFilterField.getText())),
+						filterField.textProperty(), tagFilterField
+								.textProperty());
 		filteredData.predicateProperty().bind(filterBinding);
 
 		// 3. Wrap the FilteredList in a SortedList.
@@ -162,6 +167,18 @@ public class Controller {
 				return true; // Filter matches last name.
 			}
 			return false; // Does not match.
+		};
+	}
+
+	private Predicate<Word> containsTag(String tag) {
+		return word -> {
+			// If filter text is empty, display all persons.
+			if (tag == null || tag.isEmpty()) {
+				return true;
+			}
+
+			return word.getTags().stream().filter(t -> t.equalsIgnoreCase(tag))
+					.findAny().isPresent();
 		};
 	}
 
@@ -208,6 +225,10 @@ public class Controller {
 
 	@FXML
 	public void addWord(ActionEvent event) {
+		addWord();
+	}
+
+	private void addWord() {
 		Word newWord = new Word(wordField.getText(), translationField.getText());
 		Set<String> selectedTags = Arrays.stream(
 				tagField.getText().split(TAG_SEPARATOR)).collect(
@@ -220,5 +241,12 @@ public class Controller {
 		tagField.clear();
 
 		updateTags(selectedTags);
+	}
+
+	@FXML
+	public void addWordByKey(KeyEvent event) {
+		if (event.getCode().equals(KeyCode.ENTER)) {
+			addWord();
+		}
 	}
 }
