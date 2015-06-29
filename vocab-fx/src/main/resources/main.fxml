@@ -89,6 +89,7 @@
                                       <columns>
                                         <TableColumn fx:id="wordColumn" onEditCommit="#onWordChanged" prefWidth="195.0" text="Wort" />
                                         <TableColumn fx:id="translationColumn" onEditCommit="#onTranslationChanged" prefWidth="238.0" text="Übersetzung" />
+                                          <TableColumn fx:id="tagColumn" prefWidth="172.0" text="Stichwörter" />
                                       </columns>
                                     </TableView>
                                     <Button fx:id="removeWordButton" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
