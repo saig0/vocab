@@ -27,6 +27,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.collections.FXCollections;
@@ -134,7 +135,7 @@ public class Controller {
 											.observableSet(tags
 													.toArray(new String[] {})));
 									textField.setText(item);
-									
+
 									Node newNode = (Node) textField;
 									if (currentNode == null
 											|| !currentNode.equals(newNode)) {
@@ -184,6 +185,16 @@ public class Controller {
 		// });
 
 		tagContextMenu = new ContextMenu();
+		tagField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observale,
+					String oldValue, String newValue) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 		tagField.setContextMenu(tagContextMenu);
 		tagField.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
 
