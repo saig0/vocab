@@ -78,18 +78,13 @@ public class Controller {
 
 	private final ObservableList<Word> words;
 
-	private final FilteredList<String> filteredTags;
-
 	private final ObservableList<String> tags;
-
-	private ContextMenu tagContextMenu;
 
 	public Controller() {
 		words = FXCollections.observableArrayList(new Word("Drachenfrucht",
 				"thanh long"));
 
 		tags = FXCollections.observableArrayList("Lession 1", "Essen");
-		filteredTags = new FilteredList<String>(tags);
 	}
 
 	@FXML
@@ -111,40 +106,7 @@ public class Controller {
 		tagColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
 				cellData.getValue().getTags().stream()
 						.collect(Collectors.joining(","))));
-		tagColumn
-				.setCellFactory(new Callback<TableColumn<Word, String>, TableCell<Word, String>>() {
-
-					@Override
-					public TableCell<Word, String> call(
-							TableColumn<Word, String> arg0) {
-						return new TableCell<Word, String>() {
-
-							@Override
-							protected void updateItem(String item, boolean empty) {
-								super.updateItem(item, empty);
-
-								if (empty) {
-									setText(null);
-									setGraphic(null);
-								} else {
-									setText(null);
-									Node currentNode = getGraphic();
-
-									TextField textField = TagTextFieldFactory.create(FXCollections
-											.observableSet(tags
-													.toArray(new String[] {})));
-									textField.setText(item);
-									
-									Node newNode = (Node) textField;
-									if (currentNode == null
-											|| !currentNode.equals(newNode)) {
-										setGraphic(newNode);
-									}
-								}
-							}
-						};
-					}
-				});
+		tagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
 		// addWordButton.disableProperty().bind(
 		// wordField.textProperty().isEmpty()
@@ -182,129 +144,6 @@ public class Controller {
 		// tf.setText(tf.getText() + specialChar);
 		// }
 		// });
-
-		tagContextMenu = new ContextMenu();
-		tagField.setContextMenu(tagContextMenu);
-		tagField.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-
-			@Override
-			public void handle(ContextMenuEvent event) {
-				String text = tagField.getText();
-
-				List<String> previosTags = Arrays.asList(text
-						.split(TAG_SEPARATOR));
-
-				filteredTags.setPredicate(tag -> !previosTags.contains(tag));
-
-				List<MenuItem> items = filteredTags.stream()
-						.map(tag -> createTagMenuItem2(tag))
-						.collect(Collectors.toList());
-				tagContextMenu.getItems().setAll(items);
-			}
-
-		});
-		tagField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if (newValue == true) {
-					filterTags();
-
-					if (!tagContextMenu.isShowing()) {
-						tagContextMenu.show(tagField, Side.BOTTOM, 0, 0);
-					}
-				} else {
-					tagContextMenu.hide();
-				}
-			}
-
-		});
-	}
-
-	private boolean lastCharIsEquals(String text, String character) {
-		return text.trim().lastIndexOf(character) == text.trim().length() - 1;
-	}
-
-	@FXML
-	public void tagTyped(KeyEvent event) {
-		if (event.getCode().isLetterKey() || event.getCode().isDigitKey()
-				|| event.getCode().equals(KeyCode.BACK_SPACE)
-				|| event.getCode().equals(KeyCode.COMMA)) {
-			filterTags();
-
-			if (!tagContextMenu.isShowing()) {
-				tagContextMenu.show(tagField, Side.BOTTOM, 0, 0);
-			}
-		}
-	}
-
-	private void filterTags() {
-		String text = tagField.getText();
-		if (text.contains(TAG_SEPARATOR)) {
-			String lastTag = text
-					.substring(text.lastIndexOf(TAG_SEPARATOR) + 1);
-			List<String> previosTags = Arrays.asList(text.split(TAG_SEPARATOR));
-			List<String> t = null;
-			if (text.trim().lastIndexOf(TAG_SEPARATOR) != text.trim().length() - 1) {
-				t = previosTags.subList(0, previosTags.size() - 1);
-			} else {
-				t = previosTags;
-			}
-			List<String> ts = t;
-
-			filteredTags.setPredicate(tag -> tag.toLowerCase().contains(
-					lastTag.toLowerCase())
-					&& !ts.contains(tag));
-		} else {
-			filteredTags.setPredicate(tag -> tag.toLowerCase().contains(
-					text.toLowerCase()));
-		}
-
-		List<MenuItem> items = filteredTags.stream()
-				.map(tag -> createTagMenuItem(tag))
-				.collect(Collectors.toList());
-		tagContextMenu.getItems().setAll(items);
-	}
-
-	private MenuItem createTagMenuItem(String tag) {
-		MenuItem menuItem = new MenuItem(tag);
-		menuItem.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				String text = tagField.getText();
-				if (text.contains(TAG_SEPARATOR)) {
-					String substring = text.substring(0,
-							text.lastIndexOf(TAG_SEPARATOR));
-					tagField.setText(substring + TAG_SEPARATOR + tag);
-				} else {
-					tagField.setText(tag);
-				}
-				tagField.end();
-			}
-		});
-		return menuItem;
-	}
-
-	private MenuItem createTagMenuItem2(String tag) {
-		MenuItem menuItem = new MenuItem(tag);
-		menuItem.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				String text = tagField.getText();
-
-				if (lastCharIsEquals(text, TAG_SEPARATOR)
-						|| text.trim().isEmpty()) {
-					tagField.setText(text + tag);
-				} else {
-					tagField.setText(text + TAG_SEPARATOR + tag);
-				}
-				tagField.end();
-			}
-		});
-		return menuItem;
 	}
 
 	private Predicate<Word> containsWord(String containingWord) {

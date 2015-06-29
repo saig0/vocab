@@ -75,7 +75,7 @@
                                                          <children>
                                                             <TextField fx:id="wordField" prefHeight="25.0" prefWidth="186.0" promptText="Wort" />
                                                             <TextField fx:id="translationField" prefHeight="25.0" prefWidth="231.0" promptText="Übersetzung" />
-                                                            <TextField fx:id="tagField" onKeyReleased="#tagTyped" promptText="Stichwörter" />
+                                                            <TextField fx:id="tagField" promptText="Stichwörter" />
                                                             <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" prefHeight="25.0" prefWidth="106.0" text="hinzufügen" />
                                                          </children>
                                                       </HBox>
