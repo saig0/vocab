@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -51,29 +51,60 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <VBox layoutX="28.0" layoutY="14.0" prefHeight="296.0" prefWidth="503.0" spacing="5.0">
-               <children>
-                  <HBox prefHeight="47.0" prefWidth="503.0" spacing="5.0">
-                     <children>
-                        <TextField fx:id="filterField" prefHeight="25.0" prefWidth="196.0" promptText="Filter nach Wort / Übersetzung" />
-                     </children>
-                  </HBox>
-                  <TableView fx:id="wordTable" editable="true" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn fx:id="wordColumn" onEditCommit="#onWordChanged" prefWidth="195.0" text="Wort" />
-                      <TableColumn fx:id="translationColumn" onEditCommit="#onTranslationChanged" prefWidth="238.0" text="Übersetzung" />
-                    </columns>
-                  </TableView>
-                  <HBox prefHeight="39.0" prefWidth="503.0" spacing="5.0">
-                     <children>
-                        <TextField fx:id="wordField" prefHeight="25.0" prefWidth="193.0" promptText="Wort" />
-                        <TextField fx:id="translationField" prefHeight="25.0" prefWidth="243.0" promptText="Übersetzung" />
-                        <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" text="+" />
-                     </children>
-                  </HBox>
-                  <Button fx:id="removeWordButton" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
-               </children>
-            </VBox>
+            <TabPane prefHeight="575.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Vokabeln">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0">
+                           <children>
+                              <VBox prefHeight="490.0" prefWidth="791.0" spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                 <children>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Label prefHeight="25.0" prefWidth="41.0" text="Suche" />
+                                          <TextField fx:id="filterField" prefHeight="25.0" prefWidth="196.0" promptText="nach Wort / Übersetzung..." />
+                                       </children>
+                                    </HBox>
+                                    <TitledPane text="Neues Wort hinzufügen">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="501.0">
+                                             <children>
+                                                <VBox spacing="5.0" AnchorPane.bottomAnchor="-0.6000000000000014" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <HBox spacing="5.0">
+                                                         <children>
+                                                            <TextField fx:id="wordField" prefHeight="25.0" prefWidth="186.0" promptText="Wort" />
+                                                            <TextField fx:id="translationField" prefHeight="25.0" prefWidth="231.0" promptText="Übersetzung" />
+                                                            <TextField fx:id="tagField" onKeyReleased="#tagTyped" promptText="Stichwörter" />
+                                                            <Button fx:id="addWordButton" mnemonicParsing="false" onAction="#addWord" prefHeight="25.0" prefWidth="106.0" text="hinzufügen" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                    <TableView fx:id="wordTable" editable="true">
+                                      <columns>
+                                        <TableColumn fx:id="wordColumn" onEditCommit="#onWordChanged" prefWidth="195.0" text="Wort" />
+                                        <TableColumn fx:id="translationColumn" onEditCommit="#onTranslationChanged" prefWidth="238.0" text="Übersetzung" />
+                                      </columns>
+                                    </TableView>
+                                    <Button fx:id="removeWordButton" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Test">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
       </children>
     </AnchorPane>
   </children>

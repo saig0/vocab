@@ -1,15 +1,25 @@
 package de.vocab.fx;
 
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -43,14 +53,28 @@ public class Controller {
 	@FXML
 	private TextField filterField;
 
+	@FXML
+	private Button specialChar1;
+
+	@FXML
+	private TextField tagField;
+
 	private final ObservableList<Word> words;
+
+	private final FilteredList<String> filteredTags;
+
+	private final ObservableList<String> tags;
+
+	private ContextMenu tagContextMenu;
 
 	public Controller() {
 		words = FXCollections.observableArrayList(new Word("Drachenfrucht",
 				"thanh long"));
+
+		tags = FXCollections.observableArrayList("Lession 1", "Essen");
+		filteredTags = new FilteredList<String>(tags);
 	}
 
-	@SuppressWarnings("restriction")
 	@FXML
 	private void initialize() {
 		wordColumn.setCellValueFactory(cellData -> cellData.getValue()
@@ -89,6 +113,56 @@ public class Controller {
 		sortedData.comparatorProperty().bind(wordTable.comparatorProperty());
 		// 5. Add sorted (and filtered) data to the table.
 		wordTable.setItems(sortedData);
+
+		// specialChar1.setOnAction(new EventHandler<ActionEvent>() {
+		//
+		// @Override
+		// public void handle(ActionEvent event) {
+		// Node focusOwner = wordTable.getScene().getFocusOwner();
+		// System.out.println(focusOwner.getId());
+		//
+		// String specialChar = ((Button) event.getSource()).getText();
+		// // wordField.setText(wordField.getText() + specialChar);
+		// TextField tf = (TextField) focusOwner;
+		// tf.setText(tf.getText() + specialChar);
+		// }
+		// });
+
+		tagContextMenu = new ContextMenu();
+		tagField.setContextMenu(tagContextMenu);
+	}
+
+	@FXML
+	public void tagTyped(KeyEvent event) {
+		if (event.getCode().isLetterKey() || event.getCode().isDigitKey()
+				|| event.getCode().equals(KeyCode.BACK_SPACE)) {
+			String text = tagField.getText();
+			filteredTags.setPredicate(tag -> tag.toLowerCase().contains(
+					text.toLowerCase()));
+
+			List<MenuItem> items = filteredTags.stream()
+					.map(tag -> createTagMenuItem(tag))
+					.collect(Collectors.toList());
+			tagContextMenu.getItems().setAll(items);
+
+			if (!tagContextMenu.isShowing()) {
+				tagContextMenu.show(tagField, Side.BOTTOM, 0, 0);
+			}
+		}
+	}
+
+	private MenuItem createTagMenuItem(String tag) {
+		MenuItem menuItem = new MenuItem(tag);
+		menuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// String text = tagField.getText();
+				// text.substring(text.lastIndexOf(","));
+				tagField.setText(tag);
+			}
+		});
+		return menuItem;
 	}
 
 	private Predicate<Word> containsWord(String containingWord) {
