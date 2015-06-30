@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.sun.xml.internal.txw2.output.StreamSerializer;
 
+import de.vocab.fx.ui.AbstractTableCell;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,6 +39,7 @@ import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.property.SimpleBooleanProperty;
 
 public class Controller {
 
@@ -62,10 +64,10 @@ public class Controller {
 	private TableColumn<Word, String> tagColumn;
 
 	@FXML
-	private Button addWordButton;
+	private TableColumn<Word, Boolean> actionColumn;
 
 	@FXML
-	private Button removeWordButton;
+	private Button addWordButton;
 
 	@FXML
 	private TextField filterField;
@@ -95,28 +97,55 @@ public class Controller {
 		wordColumn.setCellValueFactory(cellData -> cellData.getValue()
 				.getWordProperty());
 		wordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		// wordColumn.setOnEditCommit(event -> event.getTableView().getItems()
-		// .get(event.getTablePosition().getRow())
-		// .setWord(event.getNewValue()));
 
 		translationColumn.setCellValueFactory(cellData -> cellData.getValue()
 				.getTranslationProperty());
 		translationColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-		// translationColumn.setOnEditCommit(event -> event.getTableView()
-		// .getItems().get(event.getTablePosition().getRow())
-		// .setTranslation(event.getNewValue()));
 
 		tagColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
 				cellData.getValue().getTags().stream()
 						.collect(Collectors.joining(","))));
 		tagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
+		actionColumn.setCellValueFactory(cellData -> new SimpleBooleanProperty(
+				cellData.getValue() != null));
+		actionColumn
+				.setCellFactory(new Callback<TableColumn<Word, Boolean>, TableCell<Word, Boolean>>() {
+
+					@Override
+					public TableCell<Word, Boolean> call(
+							TableColumn<Word, Boolean> column) {
+						return new AbstractTableCell<Word, Boolean>() {
+
+							@Override
+							protected Node createContent(Boolean b) {
+								int index = this.getIndex();
+								final Word word = wordTable.getItems().get(
+										index);
+
+								Button deleteButton = new Button("löschen");
+								deleteButton
+										.setOnAction(new EventHandler<ActionEvent>() {
+
+											@Override
+											public void handle(ActionEvent event) {
+												System.out.println("remove "
+														+ word.getWord());
+												// TODO: Bug see
+												// http://stackoverflow.com/questions/11065140
+												// words.remove(word);
+												words.removeAll(word);
+											}
+										});
+								return deleteButton;
+							}
+						};
+					}
+				});
+
 		addWordButton.disableProperty().bind(
 				wordField.textProperty().isEmpty()
 						.or(translationField.textProperty().isEmpty()));
-
-		removeWordButton.disableProperty().bind(
-				wordTable.getSelectionModel().selectedItemProperty().isNull());
 
 		// 1. Wrap the ObservableList in a FilteredList (initially display all
 		// data).
@@ -135,20 +164,6 @@ public class Controller {
 		sortedData.comparatorProperty().bind(wordTable.comparatorProperty());
 		// 5. Add sorted (and filtered) data to the table.
 		wordTable.setItems(sortedData);
-
-		// specialChar1.setOnAction(new EventHandler<ActionEvent>() {
-		//
-		// @Override
-		// public void handle(ActionEvent event) {
-		// Node focusOwner = wordTable.getScene().getFocusOwner();
-		// System.out.println(focusOwner.getId());
-		//
-		// String specialChar = ((Button) event.getSource()).getText();
-		// // wordField.setText(wordField.getText() + specialChar);
-		// TextField tf = (TextField) focusOwner;
-		// tf.setText(tf.getText() + specialChar);
-		// }
-		// });
 	}
 
 	private Predicate<Word> containsWord(String containingWord) {

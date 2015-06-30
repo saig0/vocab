@@ -86,14 +86,14 @@
                                           </AnchorPane>
                                       </content>
                                     </TitledPane>
-                                    <TableView fx:id="wordTable" editable="true">
+                                    <TableView fx:id="wordTable" editable="true" prefHeight="437.0" prefWidth="780.0">
                                       <columns>
                                         <TableColumn fx:id="wordColumn" onEditCommit="#onWordChanged" prefWidth="195.0" text="Wort" />
                                         <TableColumn fx:id="translationColumn" onEditCommit="#onTranslationChanged" prefWidth="238.0" text="Übersetzung" />
                                           <TableColumn fx:id="tagColumn" onEditCommit="#onTagChanged" prefWidth="172.0" text="Stichwörter" />
+                                          <TableColumn fx:id="actionColumn" editable="false" prefWidth="115.0" sortable="false" text="Aktionen" />
                                       </columns>
                                     </TableView>
-                                    <Button fx:id="removeWordButton" mnemonicParsing="false" onAction="#deleteWord" text="Eintrag löschen" />
                                  </children>
                               </VBox>
                            </children>
@@ -109,6 +109,5 @@
             </TabPane>
       </children>
     </AnchorPane>
-      <TextField />
   </children>
 </VBox>
